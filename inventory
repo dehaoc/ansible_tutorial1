@@ -1,5 +1,13 @@
-192.168.240.142
-192.168.240.143
-# 192.168.240.144
+[web_servers]
+192.168.240.142 
 192.168.240.146
+
+[db_servers]
+192.168.240.143 
+  
+[file_servers]
+192.168.240.144 apache_package=apache2 php_package=libapache2-mod-php
+
+#[file_servers]
+#192.168.240.146 
 
