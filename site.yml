@@ -28,7 +28,6 @@
       mode: 0644
 
 
-
 - hosts: web_servers
   become: true
   tasks:
@@ -73,7 +72,7 @@
 - hosts: file_servers
   become: true
   tasks:
-  
+
   - name: install file servers
     tags: samba
     package:
