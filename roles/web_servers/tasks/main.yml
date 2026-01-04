@@ -1,0 +1,58 @@
+- name: install apache and php for Ubuntu servers
+  tags: apache,apache2,ubuntu
+  apt:
+    name:
+      - apache2
+      - libapache2-mod-php
+    state: latest
+  when: ansible_distribution == "Ubuntu"
+
+- name: install apache and php for CentOS servers
+  tags: apache,centos,httpd
+  dnf:
+    name:
+      - httpd
+      - php
+    state: latest
+  when: ansible_distribution == "CentOS"
+
+- name: start httpd on start up (for CentOS)
+  tags: appache,centos,httpd
+  service:
+    name: httpd
+    state: started
+    enabled: yes
+  when: ansible_distribution == "CentOS"
+
+- name: Open port 80/tcp in firewalld
+  ansible.posix.firewalld:
+    port: 80/tcp
+    permanent: yes
+    state: enabled
+    immediate: yes
+  when: ansible_distribution == "CentOS"
+
+- name: change e-mail address for admin
+  tags: appache,centos,httpd
+  lineinfile:
+    path: /etc/httpd/conf/httpd.conf
+    regexp: '^ServerAdmin'
+    line: ServerAdmin somebody@somewhere.net
+  when: ansible_distribution == "CentOS"
+  register: httpd
+
+- name: restart httpd (CentOS)
+  tags: appache,centos,httpd
+  service:
+    name: httpd
+    state: restarted
+  when: httpd.changed
+
+- name: copy default html file for site
+  tags: apache,apache2,httpd
+  copy:
+    src: default_site.html
+    dest: /var/www/html/index.html
+    owner: root
+    group: root
+    mode: 0644
